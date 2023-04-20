@@ -1,10 +1,11 @@
 package org.example;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.StringWriter;
 import java.util.concurrent.Semaphore;
 
 public class Playground2 extends JFrame {
@@ -30,18 +31,8 @@ public class Playground2 extends JFrame {
         super("Playground2");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1200, 720);
+        setLayout(new GridLayout(1,3));
         setLocationRelativeTo(null);
-
-
-        // Cria um painel para colocar a imagem de fundo
-        /*JPanel painelCampo = new JPanel(new FlowLayout(FlowLayout.CENTER)) {
-            @Override
-            public void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                fundo = new ImageIcon("/resources/fundo.png").getImage();
-                g.drawImage(fundo, 0,0, getWidth(), getHeight(), null);
-            }
-        };*/
 
 
         //Cria um log
@@ -51,7 +42,7 @@ public class Playground2 extends JFrame {
 
 
         //Cria um painel com o botão de SetUp
-        JPanel painelDoSetUp = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel painelDoSetUp = new JPanel();
         setUpButton = new JButton("SetUp Inicial");
 
         //Cria os compos do setUp inicial da aplicação
@@ -79,7 +70,7 @@ public class Playground2 extends JFrame {
 
 
         // Cria um painel para colocar o botão de Criar Criança
-        JPanel painelDoBotao = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel painelDoBotao = new JPanel();
         createChildButton = new JButton("Criar criança");
 
         //Cria os campos com os parâmetros das crianças
@@ -118,11 +109,17 @@ public class Playground2 extends JFrame {
 
 
         // Cria um painel para organizar os componentes
-        JPanel painelPrincipal = new JPanel(new BorderLayout());
+        JPanel painelPrincipal = new JPanel();
+        painelPrincipal.setLayout(new BoxLayout(painelPrincipal, BoxLayout.PAGE_AXIS));
+        painelPrincipal.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        painelPrincipal.add(Box.createVerticalStrut(10));
+        painelPrincipal.add(Box.createVerticalStrut(5));
         //painelPrincipal.add(painelCampo, BorderLayout.CENTER);
-        painelPrincipal.add(painelDoBotao, BorderLayout.SOUTH);
         painelPrincipal.add(painelDoSetUp, BorderLayout.NORTH);
+        painelPrincipal.add(painelDoBotao, BorderLayout.SOUTH);
+
         painelPrincipal.add(scrollPane, BorderLayout.CENTER);
+
 
 
 
@@ -132,11 +129,11 @@ public class Playground2 extends JFrame {
     }
 
 
-    private void createChild(Integer id, Integer playingTime, Integer quietTime, String hasBall) {
+    private void createChild(Integer id, Integer playingTime, Integer quietTime, @NotNull String hasBall) {
         boolean hb = false;
         char letra = 's';
         if(hasBall.charAt(0) == letra) {hb = true;}
-        Child child = new Child(id, playingTime, quietTime, hb, mutex, playing, quiet);
+        Child child = new Child(id, playingTime, quietTime, hb, quiet);
         Thread thread = new Thread(child);
         thread.start();
 
@@ -152,15 +149,8 @@ public class Playground2 extends JFrame {
     }
 
 
-    public static void log(String message) {
+    /*public static void log(String message) {
         Playground2.logTextArea.append(message + "\n");
-    }
-
-
-    public static void main(String[] args) {
-        Playground2 playground = new Playground2();
-        playground.setResizable(false);
-        playground.setVisible(true);
-    }
+    }*/
 
 }
