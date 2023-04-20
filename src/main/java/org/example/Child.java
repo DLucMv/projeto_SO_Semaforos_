@@ -151,52 +151,48 @@ public class Child extends Thread{
     }
 
     private void dropBall() throws InterruptedException {
-        mutex.acquireUninterruptibly();
-        balls.acquire();//
 
-        Basket.ballsInTheBasket += 1;
-        Basket.basketLabel.setText("Bolas no sexto: " + Basket.ballsInTheBasket);
 
         if(balls.availablePermits() == 0){
-            Janela.logTextArea.append("Child(" + id + ") " + " The basket is full. Waiting to drop the ball.\n");
-            balls.release();
-            mutex.release();
-            dropBall();
-        } else {
-            balls.release();
-            Janela.logTextArea.append("Child(" + id + ") " + " dropped the ball into the basket.\n");
+            mutex.acquireUninterruptibly();
+            balls.acquire();
 
-            mutex.release();
+            Janela.logTextArea.append("Child(" + id + ") " + " The basket is full. Waiting to drop the ball.\n");
+            //dropBall();
+        } else {
+            Janela.logTextArea.append("Child(" + id + ") " + " dropped the ball into the basket.\n");
+            Basket.ballsInTheBasket += 1;
+            Basket.basketLabel.setText("Bolas no sexto: " + Basket.ballsInTheBasket);
         }
+        hasBall = false;
+        balls.release();
+        mutex.release();
 
 
     }
 
     private void playWithBall() throws InterruptedException {
+        balls.release();
         Janela.logTextArea.append("Child(" + id + ") " + " is playing with a ball.\n");
         wait(playingTime);
         Janela.logTextArea.append("Child(" + id + ") " + " finished playing.\n");
         dropBall();
-        hasBall = false;
+        //hasBall = false;
     }
 
     private void fetchBall() throws InterruptedException {
         Janela.logTextArea.append("Child(" + id + ") " + " looking for ball.\n");
-        basket.acquire();
-        mutex.acquire();
+
 
         if(balls.availablePermits() == 0){
+            basket.acquire();
+            mutex.acquire();
             Janela.logTextArea.append("Child(" + id + ") " + " The basket is empty. Waiting for some ball to play.\n");
+        }else{
+            catchBall();
+            mutex.release();
         }
 
-        balls.acquire();
-
-        if(balls.availablePermits() == 0){
-            Janela.logTextArea.append("Child(" + id + ") " + " The basket is empty. Waiting for some ball to play.\n");
-        }
-
-        catchBall();
-        mutex.release();
 
     }
 
